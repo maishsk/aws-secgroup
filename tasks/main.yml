@@ -1,0 +1,19 @@
+---
+- name: Create a dictionary of tags 
+  set_fact:
+    tags_dict: "{{ tags_dict|default({}) |  combine(item.1) }}"
+  with_indexed_items: "{{ aws_tags }}"
+  when: 
+    - aws_tags is defined 
+
+- name: Create Component Specfic SG
+  ec2_group:
+    name: "{{ secgroup_name }}"
+    description: "Security group for {{ sg_desc }}"
+    vpc_id: "{{ vpc_id }}"
+    region: "{{ region }}"
+    rules: "{{ ingress_rules }}"
+    rules_egress: "{{ egress_rules }}"
+    tags: "{{ tags_dict | default (omit) }}" 
+    state: present
+  register: secgroup
