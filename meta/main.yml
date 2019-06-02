@@ -3,7 +3,14 @@ galaxy_info:
   description: AWS Security Group role
   license: license (BSD)
   min_ansible_version: 2.4
+  platforms:
+    - name: EL
+      versions:
+      - all
+    - name: Ubuntu
+      versions:
+      - all
   galaxy_tags:
     - aws
     - role
-    - security group
+    - security_group
