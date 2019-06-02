@@ -1,0 +1,30 @@
+---
+- name: Create a dictionary of tags 
+  set_fact:
+    tags_dict: "{{ tags_dict|default({}) |  combine(item.1) }}"
+  with_indexed_items: "{{ aws_tags }}"
+  when: 
+    - aws_tags is defined 
+
+- name: Gather facts about VPC before creation
+  ec2_vpc_net_facts:
+    region: "{{ region }}"
+    filters:
+      "tag:Name": "{{ vpc_name }}"
+  register: vpc_facts
+
+- name: Set VPC ID fact
+  set_fact:
+    vpc_id: "{{ vpc_facts.vpcs[0].id }}"
+
+- name: Create Security Group
+  ec2_group:
+    name: "{{ secgroup_name }}"
+    description: "{{ secgroup_desc }}"
+    vpc_id: "{{ vpc_id }}"
+    region: "{{ region }}"
+    rules: "{{ secgroup_rules_ingress }}"
+    rules_egress: "{{ secgroup_rules_egress }}"
+    tags: "{{ tags_dict | default (omit) }}"
+    state: present
+  register: secgroup

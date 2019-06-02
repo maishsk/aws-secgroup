@@ -1,2 +1,8 @@
 ---
-# defaults file for ansible-skel
+purge_rules: Yes
+purge_rules_egress: Yes
+purge_tags: Yes
+secgroup_rules_egress:
+  - proto: all
+    cidr_ip: 0.0.0.0/0
+    rule_desc: allow ALL outgoing traffic
